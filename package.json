@@ -21,8 +21,9 @@
     "just-test": "mocha -r ts-node/register src/**/*.spec.ts src/*.spec.ts"
   },
   "dependencies": {
-    "boardgame.io": "^0.39.10",
-    "seedrandom": "^3.0.5"
+    "lodash": "^4.17.15",
+    "seedrandom": "^3.0.5",
+    "shuffle-seed": "^1.1.6"
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",
