@@ -1,4 +1,5 @@
 import { AvailableMoves } from "./available-moves";
+import { LogItem } from "./log";
 
 export interface GameOptions {
   pro: boolean;
@@ -33,4 +34,5 @@ export interface GameState {
   ];
   phase: Phase;
   options: GameOptions;
+  log: LogItem[];
 }

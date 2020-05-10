@@ -3,8 +3,10 @@ import seedrandom from "seedrandom";
 import shuffleSeed from "shuffle-seed";
 import { GameOptions, Phase, GameState, Card } from "./gamestate";
 import { getCard } from "./card";
-import { MoveName, availableMoves } from "./available-moves";
+import { availableMoves } from "./available-moves";
 import { isEqual, sumBy } from "lodash";
+import { Move, Moves, MoveName } from "./move";
+import { asserts } from "./utils";
 
 export function setup(numPlayers: number, options: GameOptions, seed: string) {
   const rng = seedrandom(seed || Math.random().toString());
@@ -64,14 +66,6 @@ export function currentPlayers(G: GameState) {
   }
 }
 
-type Move = {
-  name: MoveName.ChooseCard;
-  data: Card;
-} | {
-  name: MoveName.PlaceCard;
-  data: number;
-};
-
 export function move(G: GameState, move: Move, playerNumber: number): GameState {
   const player = G.players[playerNumber];
   const available = player.availableMoves?.[move.name];
@@ -81,6 +75,8 @@ export function move(G: GameState, move: Move, playerNumber: number): GameState 
 
   switch (move.name) {
     case MoveName.ChooseCard: {
+      // Should not be needed, typescript should make the distinction itself
+      asserts<Moves.MoveChooseCard>(move);
       player.faceDownCard = move.data;
       player.hand.splice(player.hand.findIndex(c => isEqual(c, move.data)), 1);
       delete player.availableMoves;

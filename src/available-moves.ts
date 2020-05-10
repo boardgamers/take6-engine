@@ -1,9 +1,5 @@
 import { GameState, Phase, Card, Player } from "./gamestate";
-
-export enum MoveName {
-  ChooseCard = "chooseCard",
-  PlaceCard = "placeCard"
-}
+import { MoveName } from "./move";
 
 export interface AvailableMoves {
   [MoveName.ChooseCard]?: Card[];
