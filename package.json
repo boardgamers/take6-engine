@@ -1,6 +1,6 @@
 {
   "name": "take6-engine",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "An engine for a game similar to 6nimmt",
   "main": "dist/index.js",
   "types": "index.ts",
@@ -18,7 +18,7 @@
     "clean": "rm -Rf dist",
     "lint": "eslint . --ext .ts",
     "test": "npm run lint && npm run just-test",
-    "just-test": "mocha -r ts-node/register src/**/*.spec.ts src/*.spec.ts"
+    "just-test": "echo yes || mocha -r ts-node/register src/**/*.spec.ts src/*.spec.ts"
   },
   "dependencies": {
     "lodash": "^4.17.15",
