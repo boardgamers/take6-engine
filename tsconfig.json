@@ -4,7 +4,7 @@
     "target": "es2018",
     "module": "commonjs",
     "esModuleInterop": true,
-    // "declaration": true,                   /* Generates corresponding '.d.ts' file. */
+    "declaration": true,                   /* Generates corresponding '.d.ts' file. */
     "sourceMap": true,                     /* Generates corresponding '.map' file. */
     // "outFile": "./",                       /* Concatenate and emit output to single file. */
     "outDir": "./dist",                        /* Redirect output structure to the directory. */

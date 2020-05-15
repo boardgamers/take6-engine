@@ -8,7 +8,7 @@ import { isEqual, sumBy } from "lodash";
 import { Move, Moves, MoveName } from "./move";
 import { asserts } from "./utils";
 
-export function setup(numPlayers: number, options: GameOptions, seed: string) {
+export function setup(numPlayers: number, options: GameOptions, seed: string): GameState {
   const rng = seedrandom(seed || Math.random().toString());
 
   const cards = shuffleSeed.shuffle(new Array(104).fill(0).map((x, i) => getCard(i + 1)), rng());
@@ -53,7 +53,7 @@ export function stripSecret(G: GameState, player: number): GameState {
   };
 }
 
-export function currentPlayers(G: GameState) {
+export function currentPlayers(G: GameState): number[] {
   switch (G.phase) {
     case Phase.ChooseCard: {
       const minCards = Math.min(...G.players.map(pl => pl.hand.length));
@@ -127,10 +127,10 @@ function switchToNextPlayer(G: GameState): GameState {
   return G;
 }
 
-function ended(G: GameState) {
+function ended(G: GameState): boolean {
   return G.players.every(pl => !pl.faceDownCard && pl.hand.length === 0);
 }
 
-export function scores(G: GameState) {
+export function scores(G: GameState): number[] {
   return G.players.map(pl => sumBy(pl.discard, "points"));
 }

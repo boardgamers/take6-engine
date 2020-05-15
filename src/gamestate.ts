@@ -2,7 +2,7 @@ import { AvailableMoves } from "./available-moves";
 import { LogItem } from "./log";
 
 export interface GameOptions {
-  pro: boolean;
+  pro?: boolean;
 }
 
 export interface Card {
