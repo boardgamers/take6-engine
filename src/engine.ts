@@ -105,6 +105,16 @@ export function move(G: GameState, move: Move, playerNumber: number): GameState 
   }
 }
 
+export function moveAI(G: GameState, playerNumber: number): GameState {
+  if (G.players[playerNumber].availableMoves.chooseCard) {
+    return move(G, {name: MoveName.ChooseCard, data: G.players[playerNumber].availableMoves.chooseCard[0]}, playerNumber);
+  }
+  if (G.players[playerNumber].availableMoves.placeCard) {
+    return move(G, {name: MoveName.PlaceCard, data: G.players[playerNumber].availableMoves.placeCard[0]}, playerNumber);
+  }
+  return G;
+}
+
 function switchToNextPlayer(G: GameState): GameState {
   if (ended(G)) {
     return G;
@@ -127,7 +137,7 @@ function switchToNextPlayer(G: GameState): GameState {
   return G;
 }
 
-function ended(G: GameState): boolean {
+export function ended(G: GameState): boolean {
   return G.players.every(pl => !pl.faceDownCard && pl.hand.length === 0);
 }
 
