@@ -1,6 +1,6 @@
 import { Card } from "./gamestate";
 
-export namespace Moves {
+export declare namespace Moves {
   export interface MoveChooseCard {
     name: MoveName.ChooseCard;
     data: Card;

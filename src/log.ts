@@ -1,14 +1,14 @@
 import { Phase, Card } from "./gamestate";
 import { Move } from "./move";
 
-enum GameEventName {
+export enum GameEventName {
   GameStart = "start",
   GameEnd = "end",
   RevealCards = "reveal",
   TakeRow = "take",
 }
 
-export namespace GameEvents {
+export declare namespace GameEvents {
   export interface GameStart {
     name: GameEventName.GameStart;
   }

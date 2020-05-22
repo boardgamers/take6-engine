@@ -5,8 +5,10 @@ import { GameOptions, Phase, GameState, Card } from "./gamestate";
 import { getCard } from "./card";
 import { availableMoves } from "./available-moves";
 import { isEqual, sumBy } from "lodash";
-import { Move, Moves, MoveName } from "./move";
+import { Move, MoveName } from "./move";
+import type { Moves } from "./move";
 import { asserts } from "./utils";
+import { GameEventName } from "./log";
 
 export function setup(numPlayers: number, options: GameOptions, seed: string): GameState {
   const rng = seedrandom(seed || Math.random().toString());
@@ -93,6 +95,14 @@ export function move(G: GameState, move: Move, playerNumber: number): GameState 
       delete player.availableMoves;
 
       if (player.faceDownCard.number < G.rows[move.data].slice(-1)[0].number || G.rows[move.data].length === 6) {
+        G.log.push({
+          type: "event",
+          event: {
+            name: GameEventName.TakeRow,
+            cards: G.rows[move.data],
+            player: playerNumber
+          }
+        });
         player.discard.push(...G.rows[move.data]);
         G.rows[move.data] = [player.faceDownCard];
       } else {
