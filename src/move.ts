@@ -8,7 +8,10 @@ export declare namespace Moves {
 
   export interface MovePlaceCard {
     name: MoveName.PlaceCard;
-    data: number;
+    data: {
+      row: number;
+      replace: boolean;
+    };
   }
 }
 

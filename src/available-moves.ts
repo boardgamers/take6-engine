@@ -3,7 +3,7 @@ import { MoveName } from "./move";
 
 export interface AvailableMoves {
   [MoveName.ChooseCard]?: Card[];
-  [MoveName.PlaceCard]?: number[];
+  [MoveName.PlaceCard]?: Array<{row: number; replace: boolean}>;
 }
 
 export function availableMoves(G: GameState, player: Player): AvailableMoves {
@@ -19,14 +19,17 @@ export function availableMoves(G: GameState, player: Player): AvailableMoves {
 
       if (lastCards.every(card => card.number > player.faceDownCard.number)) {
         return {
-          [MoveName.PlaceCard]: [0, 1, 2, 3]
+          [MoveName.PlaceCard]: [0, 1, 2, 3].map(x => ({row: x, replace: true}))
         };
       }
+
+      const row = lastCards.findIndex(card => card.number === Math.min(...lastCards.filter(card => card.number < player.faceDownCard.number).map(card => card.number)));
+
       return {
-        [MoveName.PlaceCard]: [
-          // Feel free to unwind this line of code :)
-          lastCards.findIndex(card => card.number === Math.min(...lastCards.filter(card => card.number < player.faceDownCard.number).map(card => card.number)))
-        ]
+        [MoveName.PlaceCard]: [{
+          row,
+          replace: G.rows[row].length >= 5
+        }]
       };
     }
   }

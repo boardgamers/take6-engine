@@ -74,7 +74,7 @@ export function move(G: GameState, move: Move, playerNumber: number): GameState 
   const available = player.availableMoves?.[move.name];
 
   assert(available, "You are not allowed to run the command " + move.name);
-  assert(available.some((x: Card | number) => isEqual(x, move.data)), "Wrong argument for the command " + move.name);
+  assert(available.some((x: Card | {row: number; replace: boolean}) => isEqual(x, move.data)), "Wrong argument for the command " + move.name);
 
   switch (move.name) {
     case MoveName.ChooseCard: {
@@ -95,19 +95,19 @@ export function move(G: GameState, move: Move, playerNumber: number): GameState 
     case MoveName.PlaceCard: {
       delete player.availableMoves;
 
-      if (player.faceDownCard.number < G.rows[move.data].slice(-1)[0].number || G.rows[move.data].length === 6) {
+      if (player.faceDownCard.number < G.rows[move.data.row].slice(-1)[0].number || G.rows[move.data.row].length === 6) {
         G.log.push({
           type: "event",
           event: {
             name: GameEventName.TakeRow,
-            cards: G.rows[move.data],
+            cards: G.rows[move.data.row],
             player: playerNumber
           }
         });
-        player.discard.push(...G.rows[move.data]);
-        G.rows[move.data] = [player.faceDownCard];
+        player.discard.push(...G.rows[move.data.row]);
+        G.rows[move.data.row] = [player.faceDownCard];
       } else {
-        G.rows[move.data].push(player.faceDownCard);
+        G.rows[move.data.row].push(player.faceDownCard);
       }
 
       delete player.faceDownCard;
