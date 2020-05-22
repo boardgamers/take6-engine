@@ -27,7 +27,8 @@ export function setup(numPlayers: number, options: GameOptions, seed: string): G
     players,
     rows,
     options,
-    phase: Phase.ChooseCard
+    phase: Phase.ChooseCard,
+    log: []
   } as GameState;
 
   for (const player of G.players) {
