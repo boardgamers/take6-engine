@@ -114,7 +114,8 @@ export function move(G: GameState, move: Move, playerNumber: number): GameState 
       }
 
       delete player.faceDownCard;
-      return G;
+
+      return switchToNextPlayer(G);
     }
   }
 }
@@ -144,7 +145,7 @@ function switchToNextPlayer(G: GameState): GameState {
     return G;
   }
 
-  const player = G.players.find(pl => pl.faceDownCard.number === Math.min(...G.players.filter(pl => pl.faceDownCard).map(pl => pl.faceDownCard.number)));
+  const player = G.players.find(pl => pl.faceDownCard?.number === Math.min(...G.players.filter(pl => pl.faceDownCard).map(pl => pl.faceDownCard.number)));
 
   player.availableMoves = availableMoves(G, player);
 
