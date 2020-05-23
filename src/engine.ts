@@ -8,7 +8,7 @@ import { isEqual, sumBy } from "lodash";
 import { Move, MoveName } from "./move";
 import type { Moves } from "./move";
 import { asserts } from "./utils";
-import { GameEventName } from "./log";
+import { GameEventName, LogItem } from "./log";
 
 export function setup(numPlayers: number, options: GameOptions, seed: string): GameState {
   const rng = seedrandom(seed || Math.random().toString());
@@ -52,6 +52,13 @@ export function stripSecret(G: GameState, player: number): GameState {
           faceDownCard: pl.faceDownCard ? (G.phase === Phase.PlaceCard ? pl.faceDownCard  : {number: 0, points: 0}) : null
         };
       }
+    }),
+    log: G.log.map(item => {
+      if (item.type === "move" && item.player !== player && item.move.name === MoveName.ChooseCard) {
+        // Hide facedown cards in log
+        return {...item, move: {...item.move, data: {number: 0, points: 0}}};
+      }
+      return item;
     })
   };
 }
