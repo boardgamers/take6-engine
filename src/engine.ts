@@ -8,7 +8,7 @@ import { isEqual, sumBy } from "lodash";
 import { Move, MoveName } from "./move";
 import type { Moves } from "./move";
 import { asserts } from "./utils";
-import { GameEventName, LogItem } from "./log";
+import { GameEventName } from "./log";
 
 export function setup(numPlayers: number, options: GameOptions, seed: string): GameState {
   const rng = seedrandom(seed || Math.random().toString());
