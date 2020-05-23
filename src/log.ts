@@ -5,7 +5,6 @@ export enum GameEventName {
   GameStart = "start",
   GameEnd = "end",
   RevealCards = "reveal",
-  TakeRow = "take",
 }
 
 export declare namespace GameEvents {
@@ -21,15 +20,9 @@ export declare namespace GameEvents {
     name: GameEventName.RevealCards;
     cards: Card[];
   }
-
-  export interface TakeRow {
-    name: GameEventName.TakeRow;
-    cards: Card[];
-    player: number;
-  }
 }
 
-type GameEvent = GameEvents.GameStart | GameEvents.GameEnd | GameEvents.Reveal | GameEvents.TakeRow;
+type GameEvent = GameEvents.GameStart | GameEvents.GameEnd | GameEvents.Reveal;
 
 export type LogItem = {
   type: "phase";

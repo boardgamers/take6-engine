@@ -76,6 +76,8 @@ export function move(G: GameState, move: Move, playerNumber: number): GameState 
   assert(available, "You are not allowed to run the command " + move.name);
   assert(available.some((x: Card | {row: number; replace: boolean}) => isEqual(x, move.data)), "Wrong argument for the command " + move.name);
 
+  G.log.push({type: "move", player: playerNumber, move});
+
   switch (move.name) {
     case MoveName.ChooseCard: {
       // Should not be needed, typescript should make the distinction itself
@@ -87,6 +89,8 @@ export function move(G: GameState, move: Move, playerNumber: number): GameState 
       if (G.players.every(pl => pl.faceDownCard)) {
         G.phase = Phase.PlaceCard;
 
+        G.log.push({type: "event", event: {name: GameEventName.RevealCards, cards: G.players.map(pl => pl.faceDownCard)}});
+
         G = switchToNextPlayer(G);
       }
 
@@ -95,15 +99,7 @@ export function move(G: GameState, move: Move, playerNumber: number): GameState 
     case MoveName.PlaceCard: {
       delete player.availableMoves;
 
-      if (player.faceDownCard.number < G.rows[move.data.row].slice(-1)[0].number || G.rows[move.data.row].length === 6) {
-        G.log.push({
-          type: "event",
-          event: {
-            name: GameEventName.TakeRow,
-            cards: G.rows[move.data.row],
-            player: playerNumber
-          }
-        });
+      if (move.data.replace) {
         player.discard.push(...G.rows[move.data.row]);
         G.rows[move.data.row] = [player.faceDownCard];
       } else {
