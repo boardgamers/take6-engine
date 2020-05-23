@@ -23,7 +23,7 @@ export function availableMoves(G: GameState, player: Player): AvailableMoves {
         };
       }
 
-      const row = lastCards.findIndex(card => card.number === Math.min(...lastCards.filter(card => card.number < player.faceDownCard.number).map(card => card.number)));
+      const row = lastCards.findIndex(card => card.number === Math.max(...lastCards.filter(card => card.number < player.faceDownCard.number).map(card => card.number)));
 
       return {
         [MoveName.PlaceCard]: [{
