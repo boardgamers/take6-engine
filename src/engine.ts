@@ -30,7 +30,9 @@ export function setup(numPlayers: number, options: GameOptions, seed: string): G
     rows,
     options,
     phase: Phase.ChooseCard,
-    log: []
+    log: [],
+    round: 1,
+    seed
   } as GameState;
 
   for (const player of G.players) {
@@ -43,6 +45,7 @@ export function setup(numPlayers: number, options: GameOptions, seed: string): G
 export function stripSecret(G: GameState, player: number): GameState {
   return {
     ...G,
+    seed: "secret",
     players: G.players.map((pl, i) => {
       if (player === i) {
         return pl;
@@ -59,6 +62,17 @@ export function stripSecret(G: GameState, player: number): GameState {
       if (item.type === "move" && item.player !== player && item.move.name === MoveName.ChooseCard) {
         // Hide facedown cards in log
         return {...item, move: {...item.move, data: {number: 0, points: 0}}};
+      } else if (item.type === "event" && item.event.name === GameEventName.RoundStart) {
+        return {
+          ...item,
+          event: {
+            ...item.event,
+            cards: {
+              ...item.event.cards,
+              players: item.event.cards.players.map((cards, i) => i === player ? cards : cards.map(() => ({points: 0, number: 0})))
+            }
+          }
+        };
       }
       return item;
     })
@@ -138,6 +152,19 @@ function switchToNextPlayer(G: GameState): GameState {
   }
 
   if (G.players.every(pl => !pl.faceDownCard)) {
+    if (G.players.every(pl => pl.hand.length === 0)) {
+      G.round ++;
+
+      const configuration = setup(G.players.length, G.options, G.seed ? G.seed + JSON.stringify(G) : G.round + G.seed);
+      G.log.push({type: "event", event: {name: GameEventName.RoundStart, cards: {players: configuration.players.map(player => player.hand), board: configuration.rows.map(row => row[0])}}});
+
+      for (let i = 0; i < G.players.length; i++) {
+        G.players[i].hand = configuration.players[i].hand;
+      }
+      G.rows = configuration.rows;
+      G.phase = configuration.phase;
+    }
+
     G.phase = Phase.ChooseCard;
 
     for (const player of G.players) {
@@ -155,7 +182,7 @@ function switchToNextPlayer(G: GameState): GameState {
 }
 
 export function ended(G: GameState): boolean {
-  return G.players.every(pl => !pl.faceDownCard && pl.hand.length === 0);
+  return G.players.every(pl => !pl.faceDownCard && pl.hand.length === 0) && G.players.some(pl => pl.points >= 66);
 }
 
 export function scores(G: GameState): number[] {

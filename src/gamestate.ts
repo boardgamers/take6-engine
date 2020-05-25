@@ -35,4 +35,6 @@ export interface GameState {
   phase: Phase;
   options: GameOptions;
   log: LogItem[];
+  seed: string;
+  round: number;
 }
