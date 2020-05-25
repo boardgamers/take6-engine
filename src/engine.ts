@@ -15,12 +15,14 @@ export function setup(numPlayers: number, options: GameOptions, seed: string): G
 
   const cards = shuffleSeed.shuffle(new Array(104).fill(0).map((x, i) => getCard(i + 1)), rng());
 
-  const rows = new Array(4).fill(0).map(() => [cards.shift()]);
+  const rows: [Card[],Card[],Card[],Card[]] = new Array(4).fill(0).map(() => [cards.shift()]) as [Card[],Card[],Card[],Card[]];
 
   const players = new Array(numPlayers).fill(0).map(() => ({
     hand: cards.splice(0, 10),
     points: 0,
-    discard: []
+    discard: [],
+    faceDownCard: null,
+    availableMoves: null
   }));
 
   const G: GameState = {
@@ -96,7 +98,7 @@ export function move(G: GameState, move: Move, playerNumber: number): GameState 
       if (G.players.every(pl => pl.faceDownCard)) {
         G.phase = Phase.PlaceCard;
 
-        G.log.push({type: "event", event: {name: GameEventName.RevealCards, cards: G.players.map(pl => pl.faceDownCard)}});
+        G.log.push({type: "event", event: {name: GameEventName.RevealCards, cards: G.players.map(pl => pl.faceDownCard!)}});
 
         G = switchToNextPlayer(G);
       }
@@ -108,9 +110,9 @@ export function move(G: GameState, move: Move, playerNumber: number): GameState 
 
       if (move.data.replace) {
         player.discard.push(...G.rows[move.data.row]);
-        G.rows[move.data.row] = [player.faceDownCard];
+        G.rows[move.data.row] = [player.faceDownCard!];
       } else {
-        G.rows[move.data.row].push(player.faceDownCard);
+        G.rows[move.data.row].push(player.faceDownCard!);
       }
 
       delete player.faceDownCard;
@@ -121,11 +123,11 @@ export function move(G: GameState, move: Move, playerNumber: number): GameState 
 }
 
 export function moveAI(G: GameState, playerNumber: number): GameState {
-  if (G.players[playerNumber].availableMoves.chooseCard) {
-    return move(G, {name: MoveName.ChooseCard, data: G.players[playerNumber].availableMoves.chooseCard[0]}, playerNumber);
+  if (G.players[playerNumber].availableMoves!.chooseCard) {
+    return move(G, {name: MoveName.ChooseCard, data: G.players[playerNumber].availableMoves!.chooseCard![0]}, playerNumber);
   }
-  if (G.players[playerNumber].availableMoves.placeCard) {
-    return move(G, {name: MoveName.PlaceCard, data: G.players[playerNumber].availableMoves.placeCard[0]}, playerNumber);
+  if (G.players[playerNumber].availableMoves!.placeCard) {
+    return move(G, {name: MoveName.PlaceCard, data: G.players[playerNumber].availableMoves!.placeCard![0]}, playerNumber);
   }
   return G;
 }
@@ -145,7 +147,7 @@ function switchToNextPlayer(G: GameState): GameState {
     return G;
   }
 
-  const player = G.players.find(pl => pl.faceDownCard?.number === Math.min(...G.players.filter(pl => pl.faceDownCard).map(pl => pl.faceDownCard.number)));
+  const player = G.players.find(pl => pl.faceDownCard?.number === Math.min(...G.players.filter(pl => pl.faceDownCard).map(pl => pl.faceDownCard!.number)))!;
 
   player.availableMoves = availableMoves(G, player);
 

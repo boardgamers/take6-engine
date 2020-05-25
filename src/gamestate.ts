@@ -11,11 +11,11 @@ export interface Card {
 }
 
 export interface Player {
-  faceDownCard: Card;
+  faceDownCard: Card | null;
   hand: Card[];
   points: number;
   name?: string;
-  availableMoves?: AvailableMoves;
+  availableMoves: AvailableMoves | null;
   discard: Card[];
 }
 
