@@ -111,8 +111,8 @@ export function logSlice (G: GameState, options?: {player?: number; start?: numb
   const stripped = engine.stripSecret(G, options?.player);
   return {
     log: stripped.log.slice(options?.start, options?.end),
-    availableMoves: options.end === undefined ?
+    availableMoves: options?.end === undefined ?
       stripped.players.map(pl => pl.availableMoves) :
-      engine.stripSecret(replay({...G, log: G.log.slice(0, options.end)}), options.player).players.map(pl => pl.availableMoves)
+      engine.stripSecret(replay({...G, log: G.log.slice(0, options!.end)}), options!.player).players.map(pl => pl.availableMoves)
   };
 }

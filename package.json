@@ -13,7 +13,6 @@
   "license": "MIT",
   "scripts": {
     "prepublishOnly": "npm run just-test && npm run clean && tsc",
-    "postpublish": "npm run clean",
     "build": "npm run clean && tsc",
     "clean": "rm -Rf dist",
     "lint": "eslint . --ext .ts",
