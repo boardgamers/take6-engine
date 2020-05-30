@@ -17,6 +17,7 @@ export interface Player {
   name?: string;
   availableMoves: AvailableMoves | null;
   discard: Card[];
+  isAI: boolean;
 }
 
 export enum Phase {

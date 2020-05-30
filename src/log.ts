@@ -28,19 +28,26 @@ export declare namespace GameEvents {
       board: Card[];
       players: Card[][];
     };
+    round: number;
   }
 }
 
 type GameEvent = GameEvents.GameStart | GameEvents.GameEnd | GameEvents.Reveal | GameEvents.RoundStart;
 
-export type LogItem = {
+export type LogPhase = {
   type: "phase";
   phase: Phase;
-} | {
+};
+
+export type LogEvent = {
   type: "event";
   event: GameEvent;
-} | {
+}
+
+export type LogMove = {
   type: "move";
   player: number;
   move: Move;
-};
+}
+
+export type LogItem = LogPhase | LogEvent | LogMove;

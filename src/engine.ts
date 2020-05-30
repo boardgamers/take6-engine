@@ -1,7 +1,7 @@
 import assert from "assert";
 import seedrandom from "seedrandom";
 import shuffleSeed from "shuffle-seed";
-import { GameOptions, Phase, GameState, Card } from "./gamestate";
+import { GameOptions, Phase, GameState, Card, Player } from "./gamestate";
 import { getCard } from "./card";
 import { availableMoves } from "./available-moves";
 import { isEqual, sumBy } from "lodash";
@@ -17,12 +17,13 @@ export function setup(numPlayers: number, options: GameOptions, seed: string): G
 
   const rows: [Card[],Card[],Card[],Card[]] = new Array(4).fill(0).map(() => [cards.shift()]) as [Card[],Card[],Card[],Card[]];
 
-  const players = new Array(numPlayers).fill(0).map(() => ({
+  const players: Player[] = new Array(numPlayers).fill(0).map(() => ({
     hand: cards.splice(0, 10),
     points: 0,
     discard: [],
     faceDownCard: null,
-    availableMoves: null
+    availableMoves: null,
+    isAI: false
   }));
 
   const G: GameState = {
@@ -32,14 +33,29 @@ export function setup(numPlayers: number, options: GameOptions, seed: string): G
     phase: Phase.ChooseCard,
     log: [],
     round: 1,
-    seed
+    seed,
   } as GameState;
 
   for (const player of G.players) {
     player.availableMoves = availableMoves(G, player);
   }
 
+  G.log.push({type: "event", event: {name: GameEventName.GameStart}});
+
+  addRoundStart(G);
+
   return G;
+}
+
+function addRoundStart(G: GameState) {
+  G.log.push({
+    type: "event",
+    event: {
+      name: GameEventName.RoundStart,
+      cards: {players: G.players.map(player => player.hand), board: G.rows.map(row => row[0])},
+      round: G.round
+    }
+  });
 }
 
 export function stripSecret(G: GameState, player: number): GameState {
@@ -138,10 +154,12 @@ export function move(G: GameState, move: Move, playerNumber: number): GameState 
 
 export function moveAI(G: GameState, playerNumber: number): GameState {
   if (G.players[playerNumber].availableMoves!.chooseCard) {
-    return move(G, {name: MoveName.ChooseCard, data: G.players[playerNumber].availableMoves!.chooseCard![0]}, playerNumber);
+    const avail = G.players[playerNumber].availableMoves!.chooseCard!;
+    return move(G, {name: MoveName.ChooseCard, data: avail[Math.floor(Math.random() * avail.length)]}, playerNumber);
   }
   if (G.players[playerNumber].availableMoves!.placeCard) {
-    return move(G, {name: MoveName.PlaceCard, data: G.players[playerNumber].availableMoves!.placeCard![0]}, playerNumber);
+    const avail = G.players[playerNumber].availableMoves!.placeCard!;
+    return move(G, {name: MoveName.PlaceCard, data: avail[Math.floor(Math.random() * avail.length)]}, playerNumber);
   }
   return G;
 }
@@ -156,7 +174,7 @@ function switchToNextPlayer(G: GameState): GameState {
       G.round ++;
 
       const configuration = setup(G.players.length, G.options, G.seed ? G.seed + JSON.stringify(G) : G.round + G.seed);
-      G.log.push({type: "event", event: {name: GameEventName.RoundStart, cards: {players: configuration.players.map(player => player.hand), board: configuration.rows.map(row => row[0])}}});
+      addRoundStart(G);
 
       for (let i = 0; i < G.players.length; i++) {
         G.players[i].hand = configuration.players[i].hand;
