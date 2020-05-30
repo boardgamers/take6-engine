@@ -10,7 +10,7 @@ import type { Moves } from "./move";
 import { asserts } from "./utils";
 import { GameEventName } from "./log";
 
-export function setup(numPlayers: number, options: GameOptions, seed: string): GameState {
+export function setup(numPlayers: number, options: GameOptions, seed?: string): GameState {
   const rng = seedrandom(seed || Math.random().toString());
 
   const cards = shuffleSeed.shuffle(new Array(104).fill(0).map((x, i) => getCard(i + 1)), rng());
@@ -58,7 +58,7 @@ function addRoundStart(G: GameState) {
   });
 }
 
-export function stripSecret(G: GameState, player: number): GameState {
+export function stripSecret(G: GameState, player?: number): GameState {
   return {
     ...G,
     seed: "secret",
