@@ -54,7 +54,7 @@ export function scores (G: GameState) {
   return G.players.map(pl => sortedPoints.indexOf(pl.points));
 }
 
-export async function replay (G: GameState) {
+export function replay (G: GameState) {
   const oldPlayers = G.players;
 
   const oldG = G;
@@ -108,5 +108,11 @@ export function logLength (G: GameState, player?: number) {
 }
 
 export function logSlice (G: GameState, options?: {player?: number; start?: number; end?: number}) {
-  return engine.stripSecret(G, options?.player).log.slice(options?.start, options?.end);
+  const stripped = engine.stripSecret(G, options?.player);
+  return {
+    log: stripped.log.slice(options?.start, options?.end),
+    availableMoves: options.end === undefined ?
+      stripped.players.map(pl => pl.availableMoves) :
+      engine.stripSecret(replay({...G, log: G.log.slice(0, options.end)}), options.player).players.map(pl => pl.availableMoves)
+  };
 }
