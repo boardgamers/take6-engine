@@ -1,6 +1,6 @@
 {
   "name": "take6-engine",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "An engine for a game similar to 6nimmt",
   "main": "dist/index.js",
   "types": "index.ts",
@@ -12,7 +12,7 @@
   "author": "coyotte508",
   "license": "MIT",
   "scripts": {
-    "prepublishOnly": "npm run just-test && npm run clean && tsc",
+    "prepublishOnly": "npm run test && npm run clean && tsc",
     "build": "npm run clean && tsc",
     "clean": "rm -Rf dist",
     "lint": "eslint . --ext .ts",
