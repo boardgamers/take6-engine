@@ -1,19 +1,18 @@
 import assert from "assert";
 import seedrandom from "seedrandom";
-import shuffleSeed from "shuffle-seed";
 import { GameOptions, Phase, GameState, Card, Player } from "./gamestate";
 import { getCard } from "./card";
 import { availableMoves } from "./available-moves";
 import { isEqual, sumBy } from "lodash";
 import { Move, MoveName } from "./move";
 import type { Moves } from "./move";
-import { asserts } from "./utils";
+import { asserts, shuffle } from "./utils";
 import { GameEventName } from "./log";
 
 export function setup(numPlayers: number, options: GameOptions, seed?: string): GameState {
   const rng = seedrandom(seed || Math.random().toString());
 
-  const cards = shuffleSeed.shuffle(new Array(104).fill(0).map((x, i) => getCard(i + 1)), rng());
+  const cards = shuffle(new Array(104).fill(0).map((x, i) => getCard(i + 1)), rng() + '');
 
   const rows: [Card[],Card[],Card[],Card[]] = new Array(4).fill(0).map(() => [cards.shift()]) as [Card[],Card[],Card[],Card[]];
 

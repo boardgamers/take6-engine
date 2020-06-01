@@ -16,13 +16,11 @@
     "build": "npm run clean && tsc",
     "clean": "rm -Rf dist",
     "lint": "eslint . --ext .ts",
-    "test": "npm run lint && npm run just-test",
-    "just-test": "echo yes || mocha -r ts-node/register src/**/*.spec.ts src/*.spec.ts"
+    "test": "mocha -r ts-node/register src/**/*.spec.ts src/*.spec.ts"
   },
   "dependencies": {
     "lodash": "^4.17.15",
-    "seedrandom": "^3.0.5",
-    "shuffle-seed": "^1.1.6"
+    "seedrandom": "^3.0.5"
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",
@@ -45,7 +43,6 @@
   "files": [
     "index.ts",
     "wrapper.ts",
-    "types.d.ts",
     "src",
     "dist",
     "tsconfig.json"
