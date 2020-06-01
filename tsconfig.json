@@ -16,7 +16,8 @@
   "include": [
     "src/**/*.ts",
     "index.ts",
-    "wrapper.ts"
+    "wrapper.ts",
+    "types.d.ts"
   ],
   "exclude": [
     "node_modules",

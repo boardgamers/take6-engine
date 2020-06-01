@@ -44,6 +44,8 @@
   },
   "files": [
     "index.ts",
+    "wrapper.ts",
+    "types.d.ts",
     "src",
     "dist",
     "tsconfig.json"
