@@ -1,6 +1,6 @@
 {
   "name": "take6-engine",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "An engine for a game similar to 6nimmt",
   "main": "dist/index.js",
   "types": "index.ts",
