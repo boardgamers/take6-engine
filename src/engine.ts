@@ -51,7 +51,7 @@ function addRoundStart(G: GameState) {
     type: "event",
     event: {
       name: GameEventName.RoundStart,
-      cards: {players: G.players.map(player => player.hand), board: G.rows.map(row => row[0])},
+      cards: {players: G.players.map(player => [...player.hand]), board: G.rows.map(row => row[0])},
       round: G.round
     }
   });
@@ -173,13 +173,15 @@ function switchToNextPlayer(G: GameState): GameState {
       G.round ++;
 
       const configuration = setup(G.players.length, G.options, G.seed ? G.seed + JSON.stringify(G) : G.round + G.seed);
-      addRoundStart(G);
 
       for (let i = 0; i < G.players.length; i++) {
         G.players[i].hand = configuration.players[i].hand;
       }
+
       G.rows = configuration.rows;
       G.phase = configuration.phase;
+
+      addRoundStart(G);
     }
 
     G.phase = Phase.ChooseCard;
