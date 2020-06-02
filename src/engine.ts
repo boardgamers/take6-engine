@@ -9,7 +9,7 @@ import type { Moves } from "./move";
 import { asserts, shuffle } from "./utils";
 import { GameEventName } from "./log";
 
-export function setup(numPlayers: number, options: GameOptions, seed?: string): GameState {
+export function setup(numPlayers: number, {pro = false, points = 66, handSize = 10}: GameOptions, seed?: string): GameState {
   const rng = seedrandom(seed || Math.random().toString());
 
   const cards = shuffle(new Array(104).fill(0).map((x, i) => getCard(i + 1)), rng() + '');
@@ -17,7 +17,7 @@ export function setup(numPlayers: number, options: GameOptions, seed?: string): 
   const rows: [Card[],Card[],Card[],Card[]] = new Array(4).fill(0).map(() => [cards.shift()]) as [Card[],Card[],Card[],Card[]];
 
   const players: Player[] = new Array(numPlayers).fill(0).map(() => ({
-    hand: cards.splice(0, 10),
+    hand: cards.splice(0, handSize),
     points: 0,
     discard: [],
     faceDownCard: null,
@@ -28,7 +28,7 @@ export function setup(numPlayers: number, options: GameOptions, seed?: string): 
   const G: GameState = {
     players,
     rows,
-    options,
+    options: {pro, points, handSize},
     phase: Phase.ChooseCard,
     log: [],
     round: 1,
@@ -139,6 +139,7 @@ export function move(G: GameState, move: Move, playerNumber: number): GameState 
 
       if (move.data.replace) {
         player.discard.push(...G.rows[move.data.row]);
+        player.points = sumBy(player.discard, "points");
         G.rows[move.data.row] = [player.faceDownCard!];
       } else {
         G.rows[move.data.row].push(player.faceDownCard!);
@@ -201,7 +202,7 @@ function switchToNextPlayer(G: GameState): GameState {
 }
 
 export function ended(G: GameState): boolean {
-  return G.players.every(pl => !pl.faceDownCard && pl.hand.length === 0) && G.players.some(pl => pl.points >= 66);
+  return G.players.every(pl => !pl.faceDownCard && pl.hand.length === 0) && G.players.some(pl => pl.points >= G.options.points!);
 }
 
 export function scores(G: GameState): number[] {

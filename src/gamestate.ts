@@ -3,6 +3,8 @@ import { LogItem } from "./log";
 
 export interface GameOptions {
   pro?: boolean;
+  points?: number;
+  handSize?: number;
 }
 
 export interface Card {
