@@ -173,7 +173,7 @@ function switchToNextPlayer(G: GameState): GameState {
     if (G.players.every(pl => pl.hand.length === 0)) {
       G.round ++;
 
-      const configuration = setup(G.players.length, G.options, G.seed ? G.seed + JSON.stringify(G) : G.round + G.seed);
+      const configuration = setup(G.players.length, G.options, G.seed && G.seed + JSON.stringify(G));
 
       for (let i = 0; i < G.players.length; i++) {
         G.players[i].hand = configuration.players[i].hand;
