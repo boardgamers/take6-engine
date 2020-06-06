@@ -1,4 +1,3 @@
-import assert from "assert";
 import type {GameState} from "./index";
 import { Move } from "./src/move";
 import * as engine from "./src/engine";
@@ -45,16 +44,16 @@ function automove(G: GameState) {
   return G;
 }
 
-export { ended } from './src/engine';
+export { ended, scores } from './src/engine';
 
 /**
  * We give 0 to the last player, 1 to the player before last, ...
  * @param G
  */
-export function scores (G: GameState) {
-  const sortedPoints = uniq(G.players.map(pl => pl.points)).sort();
+export function rankings (G: GameState) {
+  const sortedPoints = G.players.map(pl => pl.points).sort();
 
-  return G.players.map(pl => sortedPoints.indexOf(pl.points));
+  return G.players.map(pl => sortedPoints.indexOf(pl.points) + 1);
 }
 
 export function replay (G: GameState) {
