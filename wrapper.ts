@@ -6,6 +6,7 @@ import { GameEventName } from "./src/log";
 import { asserts } from "./src/utils";
 import type { LogEvent, LogMove, GameEvents } from './src/log';
 import { uniq } from "lodash";
+import { Player } from "./src/gamestate";
 
 export async function init (nbPlayers: number, expansions: string[], options: {}, seed?: string): Promise<GameState> {
   return engine.setup(nbPlayers, options, seed);
@@ -35,8 +36,10 @@ export async function move(G: GameState, move: Move, player: number) {
 }
 
 function automove(G: GameState) {
-  while (G.players.some(pl => pl.isAI && pl.availableMoves)) {
-    G = engine.moveAI(G, G.players.findIndex(pl => pl.isAI && pl.availableMoves));
+  const condition = (pl: Player) => pl.availableMoves && (pl.isAI || pl.availableMoves.placeCard?.length === 1 || pl.availableMoves.chooseCard?.length === 1);
+
+  while (G.players.some(condition)) {
+    G = engine.moveAI(G, G.players.findIndex(condition));
   }
 
   return G;
