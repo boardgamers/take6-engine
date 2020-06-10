@@ -4,7 +4,6 @@ import * as engine from "./src/engine";
 import { GameEventName } from "./src/log";
 import { asserts } from "./src/utils";
 import type { LogEvent, LogMove, GameEvents } from './src/log';
-import { uniq } from "lodash";
 import { Player } from "./src/gamestate";
 
 export async function init (nbPlayers: number, expansions: string[], options: {}, seed?: string): Promise<GameState> {
