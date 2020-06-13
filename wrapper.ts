@@ -50,7 +50,7 @@ export { ended, scores } from './src/engine';
  * @param G
  */
 export function rankings (G: GameState) {
-  const sortedPoints = G.players.map(pl => pl.points).sort();
+  const sortedPoints = G.players.map(pl => pl.points).sort((a, b) => a - b);
 
   return G.players.map(pl => sortedPoints.indexOf(pl.points) + 1);
 }
