@@ -3,11 +3,11 @@ import seedrandom from "seedrandom";
 import { GameOptions, Phase, GameState, Card, Player } from "./gamestate";
 import { getCard } from "./card";
 import { availableMoves } from "./available-moves";
-import { isEqual, sumBy } from "lodash";
+import { isEqual, sumBy, cloneDeep } from "lodash";
 import { Move, MoveName } from "./move";
 import type { Moves } from "./move";
 import { asserts, shuffle } from "./utils";
-import { GameEventName } from "./log";
+import { GameEventName, LogItem } from "./log";
 
 export function setup(numPlayers: number, {pro = false, points = 66, handSize = 10}: GameOptions, seed?: string): GameState {
   const rng = seedrandom(seed || Math.random().toString());
@@ -207,4 +207,69 @@ export function ended(G: GameState): boolean {
 
 export function scores(G: GameState): number[] {
   return G.players.map(pl => sumBy(pl.discard, "points"));
+}
+
+export function reconstructState(initialState: GameState, log: LogItem[]): GameState
+{
+  const G = cloneDeep(initialState);
+
+  for (const item of log) {
+    G.log.push(item);
+
+    switch (item.type) {
+      case "event": {
+        switch (item.event.name) {
+          case GameEventName.GameStart: {
+            break;
+          }
+          case GameEventName.GameEnd: {
+            break;
+          }
+          case GameEventName.RevealCards: {
+            let i = 0;
+            for (const pl of G.players) {
+              pl.faceDownCard = item.event.cards[i];
+              i++;
+            }
+            break;
+          }
+          case GameEventName.RoundStart: {
+            G.round = item.event.round;
+
+            G.rows = item.event.cards.board.map(card => [card]) as [Card[], Card[], Card[], Card[]];
+
+            for (let i = 0; i < item.event.cards.players.length; i++) {
+              G.players[i].hand = item.event.cards.players[i];
+            }
+            break;
+          }
+        }
+        break;
+      }
+      case "phase": {
+        G.phase = item.phase;
+        break;
+      }
+      case "move": {
+        switch (item.move.name) {
+          case MoveName.ChooseCard: {
+            G.players[item.player].faceDownCard = item.move.data;
+            break;
+          }
+          case MoveName.PlaceCard: {
+            if (item.move.data.replace) {
+              G.players[item.player].points += sumBy(G.rows[item.move.data.row], "points");
+              G.players[item.player].discard.push(...(G.rows[item.move.data.row]));
+              G.rows[item.move.data.row] = [];
+            }
+            G.rows[item.move.data.row].push(G.players[item.player].faceDownCard!);
+            G.players[item.player].faceDownCard = null;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  return G;
 }
