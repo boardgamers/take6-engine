@@ -1,3 +1,5 @@
+> **⚠️ This repository has been archived.** Development continues in the [**boardgamers/take6**](https://github.com/boardgamers/take6) monorepo, where this project lives under `engine/`. Please open all new issues and pull requests there.
+
 # gaia-engine
 
 Typescript engine for Take6, a game similar to 6nimmt.
